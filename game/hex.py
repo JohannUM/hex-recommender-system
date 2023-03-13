@@ -1,13 +1,11 @@
 import numpy as np
 
 class Hex:
-
-    def __init__(self, gridsize:tuple):
+    def __init__(self, gridsize:int):
         self.gridsize = gridsize
         self.board = self.init_board()
 
-    def step(self, action):
-
+    def step(self, action:tuple):
         pass
 
     def get_actions(self):
@@ -17,9 +15,14 @@ class Hex:
         pass
 
     def init_board(self):
-        board = np.zeros((self.gridsize[0], self.gridsize[1]))
+        self.board = np.zeros((self.gridsize, self.gridsize))
+    
+    def update_board(self, pos:tuple, player:int):
+        self.board[pos]
 
-        return board
+    def get_board(self):
+        return self.board
+
 
     
         
