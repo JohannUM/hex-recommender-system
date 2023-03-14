@@ -3,7 +3,7 @@ import numpy as np
 class Hex:
     def __init__(self, gridsize:int):
         self.gridsize = gridsize
-        self.board = self.init_board()
+        self.init_board()
 
     def step(self, action:tuple):
         pass
