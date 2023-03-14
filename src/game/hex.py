@@ -34,6 +34,7 @@ class Hex:
                 print('Player 2 has won!')
                 break
 
+            # Switch turn
             player = 3 - player
         
         print('Game Over')
