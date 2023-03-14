@@ -18,7 +18,7 @@ class Hex:
         self.board = np.zeros((self.gridsize, self.gridsize))
     
     def update_board(self, pos:tuple, player:int):
-        self.board[pos]
+        self.board[pos] = player
 
     def get_board(self):
         return self.board
