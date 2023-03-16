@@ -1,5 +1,3 @@
-import numpy as np
-
 from game.board import Board
 
 class Hex:
