@@ -38,8 +38,6 @@ class Board:
     def add_neighbors(self):
         for row_index, row in enumerate(self.board):
             for col_index, tile in enumerate(row):
-                print(f"Tile: {tile}")
-                print(f"Creating neighbors for loc: {tile.get_location()}")
                 neighbors = []
                 neighbors.append(self.board[row_index-1][col_index]) if tile.get_location()[0] > 0 else None
                 neighbors.append(self.board[row_index+1][col_index]) if tile.get_location()[0] < self.gridsize-1 else None
