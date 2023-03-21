@@ -1,14 +1,14 @@
 import sys
 import pygame
 
-from game.board import Board
+#from game.board import Board
 from game.GUI import GUI
 
 pygame.init()
 class Game:
     def __init__(self, board_size:int=11):
         self.gui = GUI(board_size)
-        self.board = Board(board_size)
+        #self.board = Board(board_size)
 
         self.hex_hover = None
     
@@ -23,10 +23,13 @@ class Game:
                 self.move(mouse_location)
     
     def playGame(self):
-        self.gui.drawBoard()
-        self.hex_hover = self.gui.getHexagonHover()
+        player = 1
+        while True:
+            self.gui.drawBoard(player)
+            self.hex_hover = self.gui.getHexagonHover()
 
-        pygame.display.update()
-        self.gui.clock.tick(30)
-        self.handleEvents()
+            pygame.display.update()
+            self.gui.clock.tick(30)
+            self.handleEvents()
+            player = 3-player
 

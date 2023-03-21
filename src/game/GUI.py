@@ -138,14 +138,27 @@ class GUI:
                 (self.text_offset/4 + self.hex_radius * i, self.y_offset + (1.75 * self.hex_radius) * i)
             )
             self.screen.blit(text_row, text_row_rect)
+    
+    def drawTurn(self, player:int):
+        text = ''
+        if player == 1:
+            text = self.fonts.render('REDs TURN', True, self.RED, self.BLACK)
+        else:
+            text = self.fonts.render('BLUEs TURN', True, self.BLUE, self.BLACK)
         
-    def drawBoard(self, reccomended_move:tuple=None, show_reccomended_move:bool=False):
+        text_rect = text.get_rect()
+        text_rect.center = (20, 20)
+
+        self.screen.blit(text, text_rect)
+        
+    def drawBoard(self, turn:int, reccomended_move:tuple=None, show_reccomended_move:bool=False):
         hexagon_counter = 0
         for row in range(self.board_size):
             for col in range(self.board_size):
                 self.drawHexagon(self.screen, self.BLACK, self.getCoords(row, col), hexagon_counter)
                 hexagon_counter += 1
         self.drawText()
+        self.drawTurn(turn)
 
         if show_reccomended_move:
             x, y = self.getCoords(reccomended_move[0], reccomended_move[1])
