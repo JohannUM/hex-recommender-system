@@ -1,5 +1,7 @@
 from disjoint_set import DisjointSet
 
+import random
+
 from game.tile import Tile
 
 
@@ -110,3 +112,29 @@ class Board:
             current_board.append(current_row)
         
         print(*current_board, sep='\n')
+
+    
+    def get_moves(self):
+        moves = []
+        for row in range(self.get_gridsize()):
+            for col in range(self.get_gridsize()):
+                if self.check_position_state((row, col)) == 0:
+                    moves.append((row, col))
+        return moves
+    
+    def random_playout(self, player):
+        if not self.check_winner() == 0:
+            return self.check_winner()
+        
+        winner = 0
+        while winner == 0:
+            moves = self.get_moves()
+            
+            move = moves[random.randint(0, len(moves)-1)]
+            self.update_position_state(move, player)
+            winner = self.check_winner()
+            player = 3-player
+        return winner
+
+    def clone_state(self):
+        pass
