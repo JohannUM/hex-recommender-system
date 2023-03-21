@@ -110,3 +110,11 @@ class Board:
             current_board.append(current_row)
         
         print(*current_board, sep='\n')
+
+    def get_moves(self):
+        moves = []
+        for row in range(self.get_gridsize()):
+            for col in range(self.get_gridsize()):
+                if self.check_position_state((row, col)) == 0:
+                    moves.append((row, col))
+        return moves
