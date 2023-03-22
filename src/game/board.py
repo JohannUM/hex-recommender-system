@@ -88,6 +88,14 @@ class Board:
             return 2
         return 0
 
+    def get_board_states(self):
+        all_states = []
+        for row in self.board:
+            for col in row:
+                all_states.append(col.get_state())
+        return all_states
+
+
     # Below are getter/setter boilerplate functions
     def contains_location(self, location:tuple):
         return location[0] >= 0 and location[0] < self.gridsize and location[1] >= 0 and location[1] < self.gridsize

@@ -39,6 +39,14 @@ class GUI:
         self.colour = [self.WHITE] * (self.board_size ** 2)
         self.node = None
     
+    def update_board_colouring(self, states:list[int]):
+        for index, state in enumerate(states):
+            if state == 1:
+                self.colour[index] = self.RED
+            elif state == 2:
+                self.colour[index] = self.BLUE
+
+    
     def drawHexagon(self, canvas:object, colour:tuple, position:tuple, hexagon:int):
         sides = 6 # Hexagon has 6 sides
         x, y = position
@@ -147,18 +155,17 @@ class GUI:
             text = self.fonts.render('BLUEs TURN', True, self.BLUE, self.BLACK)
         
         text_rect = text.get_rect()
-        text_rect.center = (20, 20)
+        text_rect.center = (620, 20)
 
         self.screen.blit(text, text_rect)
         
-    def drawBoard(self, turn:int, reccomended_move:tuple=None, show_reccomended_move:bool=False):
+    def drawBoard(self, reccomended_move:tuple=None, show_reccomended_move:bool=False):
         hexagon_counter = 0
         for row in range(self.board_size):
             for col in range(self.board_size):
                 self.drawHexagon(self.screen, self.BLACK, self.getCoords(row, col), hexagon_counter)
                 hexagon_counter += 1
         self.drawText()
-        self.drawTurn(turn)
 
         if show_reccomended_move:
             x, y = self.getCoords(reccomended_move[0], reccomended_move[1])
@@ -172,6 +179,15 @@ class GUI:
         y = self.y_offset + (1.75 * self.hex_radius) * row
         return x, y
     
+    def convert_mouse(self, mouse_location):
+        for i, rect in enumerate(self.rects):
+            if rect.collidepoint(mouse_location):
+                self.node = i
+                break
+        
+        if self.node is not None:
+            return int(self.node / self.board_size), self.node % self.board_size
+    
     def getHexagonHover(self):
         mouse_location = pygame.mouse.get_pos()
         for i, rect in enumerate(self.rects):
@@ -182,3 +198,6 @@ class GUI:
         if self.node is not None:
             row, col = int(self.node / self.board_size), self.node % self.board_size
             self.drawHexagon(self.screen, self.GREEN, self.getCoords(row, col), self.node)
+    
+    def get_colours(self):
+        return self.colour
