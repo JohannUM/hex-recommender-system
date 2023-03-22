@@ -13,9 +13,10 @@ class Game:
         self.agent = Agent('minimax')
 
     def playGame(self):
+        run = True
         player = 1
         self.gui.drawTurn(player)
-        while True:
+        while run:
             self.gui.clock.tick(30)
             for event in pygame.event.get():
 
@@ -43,17 +44,16 @@ class Game:
                         print('HERE OCCUPIED')
                         continue
                     self.board.update_position_state((row, col), player)
+                    self.gui.update_board_colouring(self.board.get_board_states())
+
+                    winner = self.board.check_winner()
+                    if not winner == 0:
+                        run = False
+                        continue
+                    
                     player = 3-player
                     print(player)
                     self.gui.drawTurn(player)
-                    
-                
-                self.gui.update_board_colouring(self.board.get_board_states())
-                winner = self.board.check_winner()
-                if not winner == 0:
-                    pygame.quit()
-                    sys.exit()
-                
-            self.gui.drawBoard()
+            self.gui.drawBoard() # Add the MCTS predicted move here!
             self.gui.getHexagonHover()
             pygame.display.update()
