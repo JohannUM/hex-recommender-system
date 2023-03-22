@@ -1,6 +1,6 @@
 from game.board import Board
 
-from game import minimax
+from agent import minimax
 
 class Hex:
     def __init__(self, gridsize:int=11): # default size is 11
@@ -22,7 +22,7 @@ class Hex:
             print(f'Human moves: {row} {col}')
         else:
             print('\nComputer turn...')     
-            best_move = minimax.get_move(board=self.board, player=player)
+            best_move = minimax.find_move(board=self.board, player=player)
             row, col = best_move[0], best_move[1]
             print(f'Computer moves: {row} {col}')
 

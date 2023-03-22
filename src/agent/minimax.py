@@ -6,10 +6,11 @@ from typing import List
 
 class Node:
 
-    def __init__(self, board:Board, player:int, move=None):
+    def __init__(self, board:Board, player:int, move=None, moves:List=None):
         self.board = board
         self.player = player
         self.move = move
+        self.moves = moves
         self.children:List[Node] = []
 
     def evaluate(self):
@@ -20,25 +21,29 @@ class Node:
         return 0.0
     
     def expand(self):
-        for move in self.board.get_moves():
+        for move in self.moves:
             new_board = deepcopy(self.board)
             new_board.update_position_state(move, self.player)
-            self.children.append(Node(board=new_board, player=3-self.player, move=move))
+            new_moves = self.moves.copy()
+            new_moves.remove(move)
+            self.children.append(Node(board=new_board, player=3-self.player, move=move, moves=new_moves))
     
     def is_leaf(self):
-        return len(self.children) > 0
+        return not self.board.check_winner() == 0
 
 
 
-def get_move(board:Board, player):
-    root = Node(board=deepcopy(board), player=player)
-    _, move = minimax(node=root, depth=6, is_maximizing=True if player==1 else False)
+def find_move(board:Board, player):
+    root = Node(board=deepcopy(board), player=player, moves=board.get_moves())
+    _, move = minimax(node=root, depth=5, is_maximizing=True if player==1 else False)
     return move
 
 
 def minimax(node:Node, depth:int, alpha=float('-inf'), beta=float('inf'), is_maximizing=True):
 
     if depth == 0 or node.is_leaf():
+        if node.is_leaf():
+            print('REACHED LEAF')
         return node.evaluate(), None
     
     if is_maximizing:
