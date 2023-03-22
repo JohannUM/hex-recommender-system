@@ -12,4 +12,6 @@ list2 = [7, 1, 3, 4]
 
 list3 = list1.extend(list2)
 
+l = list1.copy()
+
 print(list1)

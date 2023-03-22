@@ -1,5 +1,5 @@
 from disjoint_set import DisjointSet
-
+from copy import deepcopy
 import random
 
 from game.tile import Tile
@@ -8,7 +8,7 @@ from game.tile import Tile
 class Board:
     def __init__(self, gridsize:int):
         self.gridsize = gridsize
-        self.board = []
+        self.board:list[list[Tile]] = []
         self.init_board()
         self.all_cells = []
         self.populate_cells()
@@ -145,4 +145,16 @@ class Board:
         return winner
 
     def clone_state(self):
-        pass
+        clone = Board(self.gridsize)
+        for row in range(self.gridsize):
+            row_content = []
+            for col in range(self.gridsize):
+                row_content.append(self.board[row][col].clone_tile())
+            clone.board.append(row_content)
+        clone.add_neighbors()
+        clone.populate_cells()
+        clone.red_ds = deepcopy(self.red_ds)
+        clone.blue_ds = deepcopy(self.blue_ds)
+        return clone
+        
+

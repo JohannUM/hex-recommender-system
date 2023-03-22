@@ -28,7 +28,7 @@ class Hex:
                     valid_move = True
             else:
                 print('\nComputer turn...')     
-                mcts = MCTS(player=player, game_state=self.board, max_depth=5)
+                mcts = MCTS(player=player, game_state=self.board, max_depth=200)
                 best_move = mcts.predict()
                 row, col = best_move[0], best_move[1]
                 print(f'Computer moves: {row} {col}')

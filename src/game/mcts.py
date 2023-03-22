@@ -17,26 +17,22 @@ class MCTS:
         self.leaves.append(self.root)
         for _ in range(self.max_depth):
             
-            self.leaves.extend(current_node.create_children())
+            current_children = current_node.create_children()
+            self.leaves.extend(current_children)
             self.leaves.remove(current_node)
-            print(f'Size of leaves {len(self.leaves)}')
+            #print(f'Size of leaves {len(self.leaves)}')
 
             if len(self.leaves) == 0:
                 break
 
             for leaf in self.leaves:
                 leaf.roll_out(player=self.player)
-            
-            for child in self.root.children:
-                child.update()
 
             best_score = -1
             for leaf in self.leaves:
-                print(leaf)
                 if leaf.score > best_score:
                     current_node = leaf
                     best_score = leaf.score
-            print(f'current node: {current_node}')
 
         best_move = None
         best_score = -1
@@ -72,10 +68,12 @@ class Node:
 
 
     def roll_out(self, player:int):
-        winner = self.game_state.random_playout(self.next_player)
+        # winner = self.game_state.clone_state().random_playout(self.next_player)
+        winner = deepcopy(self.game_state).random_playout(self.next_player)
         win = 1 if winner == player else 0
         
         self.backpropagate(win=win)
+        self.update()
 
     
     def backpropagate(self, win:int):
@@ -86,15 +84,22 @@ class Node:
 
 
     def update(self):
-        self.N = self.parent.n
-        self.score = (self.w / self.n) + self.C * math.sqrt(math.log(self.N) / self.n)
-        
-        if len(self.children) > 0:
-            for child in self.children:
-                child.update()
+        if self.parent is not None:
+            self.N = self.parent.n
+            self.score = (self.w / self.n) + self.C * math.sqrt(math.log(self.N) / self.n)
+            self.parent.update()
 
     def __str__(self):
         return f'score = {self.score}\n w = {self.w}\n n = {self.n}\n N = {self.N}\n'
+    
+    def print_tree(self, depth:str):
+        tabs = ''
+        for i in range(depth): 
+            tabs = tabs + '\t'
+        content = f'[w={self.w}|n={self.n}|N={self.N}|score={self.score}]'
+        print(f'{tabs}{content}')
+        for child in self.children:
+            child.print_tree(depth=(depth+1))
         
 
     

@@ -2,6 +2,8 @@ class Tile:
     def __init__(self, location:tuple, n:int, normal_tile:bool=True):
         self.row_index = location[0]
         self.col_index = location[1]
+        self.n = n
+        self.normal_tile = normal_tile
         if normal_tile:
             self.neighbors = []
             self.state = 0 # 0 = empty, 1 = occupied player 1, 2 = occupied player 2.
@@ -25,3 +27,8 @@ class Tile:
     
     def is_edge_tile(self):
         return self.edge_tile
+    
+    def clone_tile(self):
+        clone = Tile((self.row_index,self.col_index), self.n, self.normal_tile)
+        clone.state = self.state
+        return clone
