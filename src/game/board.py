@@ -1,4 +1,6 @@
 from disjoint_set import DisjointSet
+from copy import deepcopy
+import random
 
 from game.tile import Tile
 
@@ -6,7 +8,7 @@ from game.tile import Tile
 class Board:
     def __init__(self, gridsize:int):
         self.gridsize = gridsize
-        self.board = []
+        self.board:list[list[Tile]] = []
         self.init_board()
         self.all_cells = []
         self.populate_cells()
@@ -88,6 +90,14 @@ class Board:
             return 2
         return 0
 
+    def get_board_states(self):
+        all_states = []
+        for row in self.board:
+            for col in row:
+                all_states.append(col.get_state())
+        return all_states
+
+
     # Below are getter/setter boilerplate functions
     def contains_location(self, location:tuple):
         return location[0] >= 0 and location[0] < self.gridsize and location[1] >= 0 and location[1] < self.gridsize
@@ -110,3 +120,70 @@ class Board:
             current_board.append(current_row)
         
         print(*current_board, sep='\n')
+
+    
+    def get_moves(self):
+        moves = []
+        for row in range(self.get_gridsize()):
+            for col in range(self.get_gridsize()):
+                if self.check_position_state((row, col)) == 0:
+                    moves.append((row, col))
+        return moves
+    
+    def random_playout(self, player):
+        if not self.check_winner() == 0:
+            return self.check_winner()
+        
+        winner = 0
+        while winner == 0:
+            moves = self.get_moves()
+            
+            move = moves[random.randint(0, len(moves)-1)]
+            self.update_position_state(move, player)
+            winner = self.check_winner()
+            player = 3-player
+        return winner
+
+    def clone_state(self):
+        clone = Board(self.gridsize)
+        for row in range(self.gridsize):
+            row_content = []
+            for col in range(self.gridsize):
+                row_content.append(self.board[row][col].clone_tile())
+            clone.board.append(row_content)
+        clone.add_neighbors()
+        clone.populate_cells()
+        clone.red_ds = deepcopy(self.red_ds)
+        clone.blue_ds = deepcopy(self.blue_ds)
+        return clone
+        
+
+    def largest_path(self, player:int):
+        """
+        Input:
+            player (int): 1/2 depending on the player
+            
+        Output:
+            A list containing the largest path of connected tiles occupied by player
+        """
+        ds = self.red_ds if player == 1 else self.blue_ds
+        root_nodes = set(ds.find(location) for location in self.all_cells if self.check_position_state(location) == player)
+        largest_path = []
+        for root_node in root_nodes:
+            path = []
+            for location in self.all_cells:
+                if ds.find(location) == root_node and self.check_position_state(location) == player:
+                    path.append(location)
+            if len(path) > len(largest_path):
+                largest_path = path
+        return len(largest_path)
+
+
+    def percentage_occupied(self):
+        counter = 0
+        for row in range(self.gridsize):
+            for col in range(self.gridsize):
+                if self.board[row][col].get_state() == 0:
+                    counter += 1
+        num_tiles = self.gridsize**2
+        return (num_tiles - counter) / num_tiles

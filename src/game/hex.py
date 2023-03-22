@@ -1,4 +1,8 @@
+from agent.agent import Agent
 from game.board import Board
+from agent.mcts import MCTS
+
+from agent import minimax
 
 class Hex:
     def __init__(self, gridsize:int=11): # default size is 11
@@ -6,22 +10,39 @@ class Hex:
         self.board = Board(self.gridsize)
         print('(When entering a location do so like this: row col e.g. 4 1 or 0 0, space between)')
         self.board.display_board()
+        self.agent = Agent('hybrid')
+
+
+    def make_move(self, player, human=True):
+        valid_move = False
+        while not valid_move:
+            if human:
+                print('\Human turn...')
+                row, col = tuple(map(int, input(f'\n{player} turn: ').split(' ')))
+                if not self.board.contains_location((row, col)):
+                    print('Not a valid location on the board.')
+
+                elif not self.board.check_position_state((row, col)) == 0:
+                    print('This location is already occupied.')
+                    
+                else:
+                    print(f'Human moves: {row} {col}')
+                    valid_move = True
+            else:
+                print('\nComputer turn...')     
+                best_move = self.agent.find_move(player, self.board)
+                row, col = best_move[0], best_move[1]
+                print(f'Computer moves: {row} {col}')
+                valid_move = True
+
+        self.board.update_position_state((row, col), player)
+
     
     def game_loop(self):
         player = 1
         while True:
-            row, col = tuple(map(int, input(f'\n{player} turn: ').split(' ')))
 
-            if not self.board.contains_location((row, col)):
-                print('Not a valid location on the board.')
-                continue
-
-            if not self.board.check_position_state((row, col)) == 0:
-                print('This location is already occupied.')
-                continue
-
-            # Move
-            self.board.update_position_state((row, col), player)
+            self.make_move(player=player, human=True if player==1 else False)
             self.board.display_board()
 
             winner = self.board.check_winner()
@@ -31,7 +52,7 @@ class Hex:
             elif winner == 2:
                 print('Player 2 has won!')
                 break
-
+            
             # Switch turn
             player = 3 - player
         
