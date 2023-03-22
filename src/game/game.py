@@ -11,15 +11,16 @@ class Game:
         self.board = Board(board_size)
     
     def playGame(self):
+        run = True
         player = 1
         self.gui.drawTurn(player)
-        while True:
+        while run:
             self.gui.clock.tick(30)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                     pygame.quit()
                     sys.exit()
-                if event.type == pygame.MOUSEBUTTONUP:
+                if event.type == pygame.MOUSEBUTTONUP: # When clicked to the following
                     mouse_location = pygame.mouse.get_pos()
                     row, col = self.gui.convert_mouse(mouse_location)
 
@@ -36,11 +37,11 @@ class Game:
 
                     winner = self.board.check_winner()
                     if not winner == 0:
-                        pygame.quit()
-                        sys.exit()
+                        run = False
+                        continue
                     
                     player = 3-player
                     self.gui.drawTurn(player)
-            self.gui.drawBoard()
+            self.gui.drawBoard() # Add the MCTS predicted move here!
             self.gui.getHexagonHover()
             pygame.display.update()
