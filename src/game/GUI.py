@@ -1,3 +1,8 @@
+"""
+Code for generating the style and look of the hex board inspired by: https://github.com/alxdrcirilo/hex
+(but modified to suit our needs with the IS move reccomender system and other elements we required.)
+"""
+
 import pygame
 from pygame import gfxdraw, time
 from math import cos, sin, pi, radians
