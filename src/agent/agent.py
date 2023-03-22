@@ -1,5 +1,6 @@
 from game.board import Board
 from agent import minimax
+from agent.mcts import MCTS
 
 class Agent:
 
@@ -11,8 +12,14 @@ class Agent:
         if self.type == 'minimax':
             return minimax.find_move(board, player)
         elif self.type == 'mcts':
-            # TODO implement and add MCTS agent
-            pass
+            mcts = MCTS(player=player, game_state=board, max_depth=50)
+            return mcts.predict()
         elif self.type == 'hybrid':
-            # TODO implement and add hybrid agent
-            pass
+            if board.percentage_occupied() > 0.7:
+                print('minimax')
+                return minimax.find_move(board, player)
+            else:
+                print('mcts')
+                mcts = MCTS(player=player, game_state=board, max_depth=50)
+                return mcts.predict()
+            

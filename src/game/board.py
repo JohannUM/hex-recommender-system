@@ -177,3 +177,13 @@ class Board:
             if len(path) > len(largest_path):
                 largest_path = path
         return len(largest_path)
+
+
+    def percentage_occupied(self):
+        counter = 0
+        for row in range(self.gridsize):
+            for col in range(self.gridsize):
+                if self.board[row][col].get_state() == 0:
+                    counter += 1
+        num_tiles = self.gridsize**2
+        return (num_tiles - counter) / num_tiles

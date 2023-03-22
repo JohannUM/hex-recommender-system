@@ -1,6 +1,6 @@
 from agent.agent import Agent
 from game.board import Board
-from game.mcts import MCTS
+from agent.mcts import MCTS
 
 from agent import minimax
 
@@ -10,7 +10,7 @@ class Hex:
         self.board = Board(self.gridsize)
         print('(When entering a location do so like this: row col e.g. 4 1 or 0 0, space between)')
         self.board.display_board()
-        self.agent = Agent('minimax')
+        self.agent = Agent('hybrid')
 
 
     def make_move(self, player, human=True):
@@ -30,7 +30,6 @@ class Hex:
                     valid_move = True
             else:
                 print('\nComputer turn...')     
-                mcts = MCTS(player=player, game_state=self.board, max_depth=5)
                 best_move = self.agent.find_move(player, self.board)
                 row, col = best_move[0], best_move[1]
                 print(f'Computer moves: {row} {col}')
