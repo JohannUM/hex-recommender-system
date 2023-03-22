@@ -2,8 +2,8 @@ from game.game import Game
 from game.hex import Hex
 
 if __name__ == '__main__':
-    # game = Game()
-    # game.playGame()
+    '''game = Game()
+    game.playGame()'''
     
     while True:
         board_size = int(input('What size board? (n): '))
