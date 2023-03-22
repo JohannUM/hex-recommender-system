@@ -23,12 +23,8 @@ class Node:
         elif self.board.check_winner() == 2:
             score = -1.0
         else:
-            score = 0.0
-        '''else:
-            player1_path = self.board.largest_path(1)
+            '''player1_path = self.board.largest_path(1)
             player2_path = self.board.largest_path(2)
-            print('player1_path', player1_path)
-            print('player2_path', player2_path)
     
             if player1_path > player2_path:
                 score = (player1_path - player2_path) / player1_path
@@ -36,8 +32,8 @@ class Node:
                 score = -(player2_path - player1_path) / player2_path
             else:
                 score = 0.0'''
+            score = 0.0
         
-        print(self.move, score)
         return score
     
     def expand(self):
@@ -55,37 +51,47 @@ class Node:
 
 def find_move(board:Board, player:int):
     root = Node(board=deepcopy(board), player=player, moves=board.get_moves())
-    score, move = minimax(node=root, depth=3, is_maximizing=True if player==1 else False)
+    score, move = minimax(node=root, depth=5, is_maximizing=True if player==1 else False)
+    print(f'minimax decides {move} with score {score}')
     return move
 
 
-def minimax(node:Node, depth:int, alpha=float('-inf'), beta=float('inf'), is_maximizing=True):
+def minimax(node: Node, depth: int, alpha: float = float('-inf'), beta: float = float('inf'), is_maximizing: bool = True, transposition_table: dict = None):
     if depth == 0 or node.is_leaf():
         if node.is_leaf():
             print('REACHED LEAF')
         return node.evaluate(), None
     
+    if transposition_table is not None and node.board in transposition_table:
+        return transposition_table[node.board], None
+    
     if is_maximizing:
-        max_score, best_move = float('-inf'), None
         node.expand()
-        for child in node.children:
-            score, _ = minimax(child, depth-1, alpha, beta, False)
+        children = sorted(node.children, key=lambda x: x.evaluate(), reverse=True)
+        max_score, best_move = float('-inf'), None
+        for child in children:
+            score, _ = minimax(child, depth - 1, alpha, beta, False, transposition_table)
             if score > max_score:
                 max_score, best_move = score, child.move
             alpha = max(alpha, score)
             if beta <= alpha:
                 break
+        if transposition_table is not None:
+            transposition_table[node.board] = max_score
         return max_score, best_move
     else:
-        min_score, best_move = float('inf'), None
         node.expand()
-        for child in node.children:
-            score, _ = minimax(child, depth-1, alpha, beta, True)
+        children = sorted(node.children, key=lambda x: x.evaluate())
+        min_score, best_move = float('inf'), None
+        for child in children:
+            score, _ = minimax(child, depth - 1, alpha, beta, True, transposition_table)
             if score < min_score:
                 min_score, best_move = score, child.move
             beta = min(beta, min_score)
             if beta <= alpha:
                 break
+        if transposition_table is not None:
+            transposition_table[node.board] = min_score
         return min_score, best_move
     
 
