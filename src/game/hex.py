@@ -1,6 +1,8 @@
 from game.board import Board
 from game.mcts import MCTS
 
+from agent import minimax
+
 class Hex:
     def __init__(self, gridsize:int=11): # default size is 11
         self.gridsize = gridsize
