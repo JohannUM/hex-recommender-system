@@ -16,6 +16,7 @@ class Game:
         run = True
         player = 1
         self.gui.drawTurn(player)
+        next_move = self.agent.find_move(player, self.board)
         while run:
             self.gui.clock.tick(30)
             for event in pygame.event.get():
@@ -44,8 +45,10 @@ class Game:
                     
                     player = 3-player
                     self.gui.drawTurn(player)
+                    next_move = self.agent.find_move(player, self.board)
+
 
             
-            self.gui.drawBoard(reccomended_move=self.agent.find_move(player, self.board), show_reccomended_move=True) # Add the MCTS predicted move here!
+            self.gui.drawBoard(reccomended_move=next_move, show_reccomended_move=True) # Add the MCTS predicted move here!
             self.gui.getHexagonHover()
             pygame.display.update()
