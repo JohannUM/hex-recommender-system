@@ -12,7 +12,7 @@ class Agent:
         if self.type == 'minimax':
             return minimax.find_move(board, player)
         elif self.type == 'mcts':
-            mcts = MCTS(player=player, game_state=board, max_depth=50)
+            mcts = MCTS(player=player, game_state=board, max_depth=5)
             return mcts.predict()
         elif self.type == 'hybrid':
             if board.percentage_occupied() > 0.7:
@@ -20,6 +20,6 @@ class Agent:
                 return minimax.find_move(board, player)
             else:
                 print('mcts')
-                mcts = MCTS(player=player, game_state=board, max_depth=50)
+                mcts = MCTS(player=player, game_state=board, max_depth=5)
                 return mcts.predict()
             

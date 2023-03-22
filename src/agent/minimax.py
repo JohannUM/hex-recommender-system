@@ -55,8 +55,7 @@ class Node:
 
 def find_move(board:Board, player:int):
     root = Node(board=deepcopy(board), player=player, moves=board.get_moves())
-    score, move = minimax(node=root, depth=5, is_maximizing=True if player==1 else False)
-    print('Score', score)
+    score, move = minimax(node=root, depth=3, is_maximizing=True if player==1 else False)
     return move
 
 
