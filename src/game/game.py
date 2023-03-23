@@ -11,6 +11,13 @@ class Game:
         self.gui = GUI(board_size)
         self.board = Board(board_size)
         self.agent = Agent('hybrid')
+        self.tresholds = {
+            3: 0.0,
+            5: 0.3,
+            7: 0.6,
+            9: 0.8,
+            11: 0.9
+        }
     
     def playGame(self):
         run = True
@@ -49,7 +56,7 @@ class Game:
                     self.gui.drawTurn(player)
                 
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_h:
-                    next_move = self.agent.find_move(player, self.board)
+                    next_move = self.agent.find_move(player, self.board, hybrid_threshold=self.tresholds[self.board.gridsize])
                     show_hint = True
 
 
