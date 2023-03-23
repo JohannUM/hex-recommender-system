@@ -1,3 +1,8 @@
+"""
+Code for generating the style and look of the hex board inspired by: https://github.com/alxdrcirilo/hex
+(but modified to suit our needs with the IS move reccomender system and other elements we required.)
+"""
+
 import pygame
 from pygame import gfxdraw, time
 from math import cos, sin, pi, radians
@@ -38,6 +43,7 @@ class GUI:
         self.rects = []
         self.colour = [self.WHITE] * (self.board_size ** 2)
         self.node = None
+        self.clicked = None
     
     def update_board_colouring(self, states:list[int]):
         for index, state in enumerate(states):
@@ -152,7 +158,7 @@ class GUI:
         if player == 1:
             text = self.fonts.render('REDs TURN', True, self.RED, self.BLACK)
         else:
-            text = self.fonts.render('BLUEs TURN', True, self.BLUE, self.BLACK)
+            text = self.fonts.render('BLUE TURN', True, self.BLUE, self.BLACK)
         
         text_rect = text.get_rect()
         text_rect.center = (620, 20)
@@ -182,11 +188,13 @@ class GUI:
     def convert_mouse(self, mouse_location):
         for i, rect in enumerate(self.rects):
             if rect.collidepoint(mouse_location):
-                self.node = i
+                self.clicked = i
                 break
+        row, col = -1, -1
+        if self.clicked is not None:
+            row, col = int(self.clicked / self.board_size), self.clicked % self.board_size
         
-        if self.node is not None:
-            return int(self.node / self.board_size), self.node % self.board_size
+        return row, col
     
     def getHexagonHover(self):
         mouse_location = pygame.mouse.get_pos()
@@ -201,3 +209,18 @@ class GUI:
     
     def get_colours(self):
         return self.colour
+
+    def drawWinner(self, winner:int):
+        self.screen.fill(self.BLACK)
+        self.fonts = pygame.font.SysFont('Sans', 48)
+
+        text = ''
+        if winner == 1:
+            text = self.fonts.render('RED HAS WON!', True, self.RED, self.BLACK)
+        else:
+            text = self.fonts.render('BLUE HAS WON', True, self.BLUE, self.BLACK)
+        
+        text_rect = text.get_rect()
+        text_rect.center = (self.screen.get_width()//2, self.screen.get_height()//2)
+
+        self.screen.blit(text, text_rect)
