@@ -8,14 +8,14 @@ class Agent:
         self.type = type
 
 
-    def find_move(self, player, board:Board):
+    def find_move(self, player, board:Board, hybrid_threshold=0.7):
         if self.type == 'minimax':
             return minimax.find_move(board, player)
         elif self.type == 'mcts':
             mcts = MCTS(player=player, game_state=board, max_depth=5)
             return mcts.predict()
         elif self.type == 'hybrid':
-            if board.percentage_occupied() > 0.4:
+            if board.percentage_occupied() > hybrid_threshold:
                 print('minimax')
                 return minimax.find_move(board, player)
             else:

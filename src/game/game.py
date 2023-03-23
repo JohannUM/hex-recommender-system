@@ -11,12 +11,19 @@ class Game:
         self.gui = GUI(board_size)
         self.board = Board(board_size)
         self.agent = Agent('hybrid')
+        self.tresholds = {
+            3: 0.0,
+            5: 0.3,
+            7: 0.6,
+            9: 0.8,
+            11: 0.9
+        }
     
     def playGame(self):
         run = True
         player = 1
         self.gui.drawTurn(player)
-        next_move = self.agent.find_move(player, self.board)
+        next_move = self.agent.find_move(player, self.board, hybrid_threshold=self.tresholds[self.board.gridsize])
         while run:
             self.gui.clock.tick(30)
             for event in pygame.event.get():
