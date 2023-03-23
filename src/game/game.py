@@ -16,7 +16,8 @@ class Game:
         run = True
         player = 1
         self.gui.drawTurn(player)
-        next_move = self.agent.find_move(player, self.board)
+        next_move = (0, 0)
+        show_hint = False
         while run:
             self.gui.clock.tick(30)
             for event in pygame.event.get():
@@ -24,6 +25,7 @@ class Game:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONUP: # When clicked to the following
+                    show_hint = False
                     mouse_location = pygame.mouse.get_pos()
                     row, col = self.gui.convert_mouse(mouse_location)
 
@@ -45,10 +47,13 @@ class Game:
                     
                     player = 3-player
                     self.gui.drawTurn(player)
+                
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_h:
                     next_move = self.agent.find_move(player, self.board)
+                    show_hint = True
 
 
             
-            self.gui.drawBoard(reccomended_move=next_move, show_reccomended_move=True) # Add the MCTS predicted move here!
+            self.gui.drawBoard(reccomended_move=next_move, show_reccomended_move=show_hint) # Add the MCTS predicted move here!
             self.gui.getHexagonHover()
             pygame.display.update()
