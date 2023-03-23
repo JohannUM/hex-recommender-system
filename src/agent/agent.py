@@ -15,7 +15,7 @@ class Agent:
             mcts = MCTS(player=player, game_state=board, max_depth=5)
             return mcts.predict()
         elif self.type == 'hybrid':
-            if board.percentage_occupied() > 0.5:
+            if board.percentage_occupied() > 0.4:
                 print('minimax')
                 return minimax.find_move(board, player)
             else:
