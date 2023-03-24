@@ -1,7 +1,6 @@
 from copy import deepcopy
 import math
 from game.board import Board
-from game.board import RollOutThread
 import time
 from threading import Thread
 
@@ -26,12 +25,14 @@ class MCTS:
 
             if len(self.leaves) == 0:
                 break
-
+            
             for leaf in self.leaves:
                 leaf.roll_out(player=self.player)
-
+            threads = []
             for child in self.root.children:
-                Thread(target=child.update()).start()
+                thread = Thread(target=child.update())
+                threads.append(thread)
+                thread.start()
 
             best_score = -1
             for leaf in self.leaves:
@@ -74,25 +75,13 @@ class Node:
 
     def roll_out(self, player:int):
         # winner = self.game_state.clone_state().random_playout(self.next_player)
-        num_rollouts = 10
-        wins = [None for i in range(num_rollouts)]
-        threads = threads = [RollOutThread(self.game_state.clone_state(), self.next_player) for _ in range(num_rollouts)]
-        for thread in threads:
-            thread.start()
-
-        for thread in threads:
-            thread.join()
-
-        for i in range(len(wins)):
-            wins[i] = 1 if threads[i].winner == player else 0
-
-        
-        win = sum(wins) / len(wins)
+        winner = self.game_state.clone_state().random_playout(self.next_player)
+        win = 1 if winner == player else 0
         
         self.backpropagate(win=win)
 
     
-    def backpropagate(self, win):
+    def backpropagate(self, win:int):
         self.w += win
         self.n += 1
         if self.parent is not None:

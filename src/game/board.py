@@ -58,7 +58,7 @@ class Board:
                 self.all_cells.append(tile.get_location())
                 self.possible_moves.append(tile.get_location())
     
-    def update_position_state(self, location:tuple, player:int):
+    def update_position_state(self, location:tuple[int], player:int):
         """
         Input:
             location (tuple): containing a valid x,y location on the board
@@ -153,13 +153,16 @@ class Board:
 
     def clone_state(self):
         clone = Board(self.gridsize)
+        clone.board:list[list[Tile]] = []
         for row in range(self.gridsize):
             row_content = []
             for col in range(self.gridsize):
                 row_content.append(self.board[row][col].clone_tile())
             clone.board.append(row_content)
         clone.add_neighbors()
-        clone.populate_cells()
+        clone.possible_moves = []
+        for i in range(len(self.possible_moves)):
+            clone.possible_moves.append((self.possible_moves[i][0], self.possible_moves[i][1]))
         clone.red_ds = deepcopy(self.red_ds)
         clone.blue_ds = deepcopy(self.blue_ds)
         return clone
@@ -194,26 +197,4 @@ class Board:
                     counter += 1
         num_tiles = self.gridsize**2
         return (num_tiles - counter) / num_tiles
-    
-class RollOutThread(Thread):
-    def __init__(self, board:Board, player:int):
-        Thread.__init__(self)
-        self.board = board
-        self.player = player
-        self.winner = -1
-
-    def run(self):
-        if not self.board.check_winner() == 0:
-            return self.board.check_winner()
-        
-        winner = 0
-        while winner == 0:
-            moves = self.board.get_moves()
-            
-            move = moves[random.randint(0, len(moves)-1)]
-            self.board.update_position_state(move, self.player)
-            winner = self.board.check_winner()
-            self.player = 3-self.player
-        self.winner = winner
-
 
