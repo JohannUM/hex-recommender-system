@@ -84,7 +84,7 @@ class Node:
             thread.join()
 
         for i in range(len(wins)):
-            wins[i] = threads[i].winner
+            wins[i] = 1 if threads[i].winner == player else 0
 
         
         win = sum(wins) / len(wins)
