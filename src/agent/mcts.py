@@ -2,6 +2,7 @@ from copy import deepcopy
 import math
 from game.board import Board
 import time
+from threading import Thread
 
 class MCTS:
 
@@ -27,6 +28,9 @@ class MCTS:
 
             for leaf in self.leaves:
                 leaf.roll_out(player=self.player)
+
+            for child in self.root.children:
+                Thread(target=child.update()).start()
 
             best_score = -1
             for leaf in self.leaves:
@@ -73,7 +77,6 @@ class Node:
         win = 1 if winner == player else 0
         
         self.backpropagate(win=win)
-        self.update()
 
     
     def backpropagate(self, win:int):
@@ -86,8 +89,12 @@ class Node:
     def update(self):
         if self.parent is not None:
             self.N = self.parent.n
-            self.score = (self.w / self.n) + self.C * math.sqrt(math.log(self.N) / self.n)
-            self.parent.update()
+            a = self.w / self.n
+            b = math.log(self.N) / self.n
+            c = math.sqrt(b)
+            self.score = a + self.C * c
+        for child in self.children:
+            child.update()
 
     def __str__(self):
         return f'score = {self.score}\n w = {self.w}\n n = {self.n}\n N = {self.N}\n'
