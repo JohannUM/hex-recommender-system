@@ -1,5 +1,6 @@
 from disjoint_set import DisjointSet
 from copy import deepcopy
+from threading import Thread
 import random
 
 from game.tile import Tile
@@ -11,7 +12,9 @@ class Board:
         self.board:list[list[Tile]] = []
         self.init_board()
         self.all_cells = []
+        self.possible_moves = []
         self.populate_cells()
+        
         # Create 4 fake Tiles which represent the edges of the boards the players need to connect
         self.top_node = (-1, 0)
         self.bottom_node = (self.gridsize, 0)
@@ -53,14 +56,16 @@ class Board:
         for row in self.board:
             for tile in row:
                 self.all_cells.append(tile.get_location())
+                self.possible_moves.append(tile.get_location())
     
-    def update_position_state(self, location:tuple, player:int):
+    def update_position_state(self, location:tuple[int], player:int):
         """
         Input:
             location (tuple): containing a valid x,y location on the board
             player (int): 1/2 depending on current player
         """
         self.board[location[0]][location[1]].set_state(player) # Sets the state of the tile at location, to be 1/2
+        self.possible_moves.remove((location[0],location[1]))
         # Check for connecting neighbors
         for neighbour in self.board[location[0]][location[1]].get_neighbors():
             if neighbour.get_state() == player:
@@ -123,12 +128,14 @@ class Board:
 
     
     def get_moves(self):
+        '''
         moves = []
         for row in range(self.get_gridsize()):
             for col in range(self.get_gridsize()):
                 if self.check_position_state((row, col)) == 0:
                     moves.append((row, col))
-        return moves
+        '''
+        return self.possible_moves
     
     def random_playout(self, player):
         if not self.check_winner() == 0:
@@ -146,13 +153,16 @@ class Board:
 
     def clone_state(self):
         clone = Board(self.gridsize)
+        clone.board:list[list[Tile]] = []
         for row in range(self.gridsize):
             row_content = []
             for col in range(self.gridsize):
                 row_content.append(self.board[row][col].clone_tile())
             clone.board.append(row_content)
         clone.add_neighbors()
-        clone.populate_cells()
+        clone.possible_moves = []
+        for i in range(len(self.possible_moves)):
+            clone.possible_moves.append((self.possible_moves[i][0], self.possible_moves[i][1]))
         clone.red_ds = deepcopy(self.red_ds)
         clone.blue_ds = deepcopy(self.blue_ds)
         return clone
@@ -187,3 +197,4 @@ class Board:
                     counter += 1
         num_tiles = self.gridsize**2
         return (num_tiles - counter) / num_tiles
+

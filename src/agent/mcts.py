@@ -2,6 +2,7 @@ from copy import deepcopy
 import math
 from game.board import Board
 import time
+from threading import Thread
 
 class MCTS:
 
@@ -24,9 +25,14 @@ class MCTS:
 
             if len(self.leaves) == 0:
                 break
-
+            
             for leaf in self.leaves:
                 leaf.roll_out(player=self.player)
+            threads = []
+            for child in self.root.children:
+                thread = Thread(target=child.update())
+                threads.append(thread)
+                thread.start()
 
             best_score = -1
             for leaf in self.leaves:
@@ -61,7 +67,7 @@ class Node:
         possible_moves = self.game_state.get_moves()
         
         for move in possible_moves:
-            new_state = deepcopy(self.game_state)
+            new_state = self.game_state.clone_state()
             new_state.update_position_state(move, self.next_player)
             self.children.append(Node(game_state=new_state, parent=self, current_player=self.next_player, move=move))
         return self.children
@@ -69,11 +75,10 @@ class Node:
 
     def roll_out(self, player:int):
         # winner = self.game_state.clone_state().random_playout(self.next_player)
-        winner = deepcopy(self.game_state).random_playout(self.next_player)
+        winner = self.game_state.clone_state().random_playout(self.next_player)
         win = 1 if winner == player else 0
         
         self.backpropagate(win=win)
-        self.update()
 
     
     def backpropagate(self, win:int):
@@ -86,8 +91,12 @@ class Node:
     def update(self):
         if self.parent is not None:
             self.N = self.parent.n
-            self.score = (self.w / self.n) + self.C * math.sqrt(math.log(self.N) / self.n)
-            self.parent.update()
+            a = self.w / self.n
+            b = math.log(self.N) / self.n
+            c = math.sqrt(b)
+            self.score = a + self.C * c
+        for child in self.children:
+            child.update()
 
     def __str__(self):
         return f'score = {self.score}\n w = {self.w}\n n = {self.n}\n N = {self.N}\n'

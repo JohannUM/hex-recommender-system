@@ -36,14 +36,15 @@ class Agent:
         return move
     
     def explainMove(self, player:int, move:tuple, board:Board):
-        board_copy = deepcopy(board)
+        board_copy = board.clone_state()
         board_copy.update_position_state(move, player)
         if board_copy.check_winner() == player:
             print(f'This move wins the game for player {player}.')
             return
         
-        board_copy.update_position_state(move, 3-player)
-        if board_copy.check_winner() == 3-player:
+        board_copy_2 = board.clone_state()
+        board_copy_2.update_position_state(move, 3-player)
+        if board_copy_2.check_winner() == 3-player:
             print(f'This move blocks the opposing player from winning.')
             return
         
