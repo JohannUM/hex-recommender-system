@@ -4,6 +4,7 @@ from copy import deepcopy
 from typing import List
 
 import random
+import time
 
 
 class Node:
@@ -39,8 +40,6 @@ class Node:
         return not self.board.check_winner() == 0
 
 
-
-import time
 
 def find_move(board:Board, player:int, max_depth=10, time_limit:int=5):
     root = Node(board=board, player=player, moves=board.get_moves())
