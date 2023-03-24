@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 from game.board import Board
 from agent import minimax
 from agent.mcts import MCTS

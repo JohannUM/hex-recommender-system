@@ -1,6 +1,5 @@
 from disjoint_set import DisjointSet
 from copy import deepcopy
-from threading import Thread
 import random
 
 from game.tile import Tile
