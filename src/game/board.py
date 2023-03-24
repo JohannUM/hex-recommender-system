@@ -166,27 +166,6 @@ class Board:
         clone.red_ds = deepcopy(self.red_ds)
         clone.blue_ds = deepcopy(self.blue_ds)
         return clone
-        
-
-    def largest_path(self, player:int):
-        """
-        Input:
-            player (int): 1/2 depending on the player
-            
-        Output:
-            A list containing the largest path of connected tiles occupied by player
-        """
-        ds = self.red_ds if player == 1 else self.blue_ds
-        root_nodes = set(ds.find(location) for location in self.all_cells if self.check_position_state(location) == player)
-        largest_path = []
-        for root_node in root_nodes:
-            path = []
-            for location in self.all_cells:
-                if ds.find(location) == root_node and self.check_position_state(location) == player:
-                    path.append(location)
-            if len(path) > len(largest_path):
-                largest_path = path
-        return len(largest_path)
 
 
     def percentage_occupied(self):

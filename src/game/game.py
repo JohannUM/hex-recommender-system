@@ -31,11 +31,11 @@ class Game:
                     row, col = self.gui.convert_mouse(mouse_location)
 
                     if not self.board.contains_location((row, col)):
-                        print('HERE NOT ON BOARD')
+                        # print('HERE NOT ON BOARD')
                         continue
 
                     if not self.board.check_position_state((row, col)) == 0:
-                        print('HERE OCCUPIED')
+                        # print('HERE OCCUPIED')
                         continue
 
                     self.board.update_position_state((row, col), player)

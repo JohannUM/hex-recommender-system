@@ -161,7 +161,7 @@ class GUI:
             text = self.fonts.render('BLUE TURN', True, self.BLUE, self.BLACK)
         
         text_rect = text.get_rect()
-        text_rect.center = (620, 20)
+        text_rect.center = (420, 20)
 
         self.screen.blit(text, text_rect)
         

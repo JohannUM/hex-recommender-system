@@ -49,7 +49,6 @@ def find_move(board:Board, player:int, max_depth=10, time_limit:int=5):
     while time.time() - start_time < time_limit:
         if depth > max_depth:
             break
-        print(f'Currently running at max depth {depth}')
         score, move = minimax(node=root, depth=depth, is_maximizing=True if player==1 else False, start_time=start_time, time_limit=time_limit)
         if move is not None:
             best_move = move
