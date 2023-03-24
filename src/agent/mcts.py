@@ -1,6 +1,7 @@
 from copy import deepcopy
 import math
 from game.board import Board
+from game.board import RollOutThread
 import time
 from threading import Thread
 
@@ -65,7 +66,7 @@ class Node:
         possible_moves = self.game_state.get_moves()
         
         for move in possible_moves:
-            new_state = deepcopy(self.game_state)
+            new_state = self.game_state.clone_state()
             new_state.update_position_state(move, self.next_player)
             self.children.append(Node(game_state=new_state, parent=self, current_player=self.next_player, move=move))
         return self.children
@@ -73,13 +74,25 @@ class Node:
 
     def roll_out(self, player:int):
         # winner = self.game_state.clone_state().random_playout(self.next_player)
-        winner = deepcopy(self.game_state).random_playout(self.next_player)
-        win = 1 if winner == player else 0
+        num_rollouts = 10
+        wins = [None for i in range(num_rollouts)]
+        threads = threads = [RollOutThread(self.game_state.clone_state(), self.next_player) for _ in range(num_rollouts)]
+        for thread in threads:
+            thread.start()
+
+        for thread in threads:
+            thread.join()
+
+        for i in range(len(wins)):
+            wins[i] = threads[i].winner
+
+        
+        win = sum(wins) / len(wins)
         
         self.backpropagate(win=win)
 
     
-    def backpropagate(self, win:int):
+    def backpropagate(self, win):
         self.w += win
         self.n += 1
         if self.parent is not None:
