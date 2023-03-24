@@ -32,7 +32,7 @@ class Agent:
                 #print('mcts')
                 mcts = MCTS(player=player, game_state=board, max_depth=5)
                 move = mcts.predict()
-        self.explainMove(move, board)
+        self.explainMove(player, move, board)
         return move
     
     def explainMove(self, player:int, move:tuple, board:Board):
