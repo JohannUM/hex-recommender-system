@@ -1,7 +1,5 @@
-from copy import deepcopy
 import math
 from game.board import Board
-import time
 from threading import Thread
 
 class MCTS:
